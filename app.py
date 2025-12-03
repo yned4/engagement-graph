@@ -24,11 +24,6 @@ def check_password():
 if not check_password():
     st.stop()  # パスワードが違う場合はここで処理を停止（中身を見せない）
 
-import streamlit as st
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-
 # -------------------------------------------
 # 1. ページ設定とデータ生成 (実運用ではDBから取得)
 # -------------------------------------------
