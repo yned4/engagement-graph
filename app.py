@@ -20,7 +20,7 @@ if not check_password(): st.stop()
 # -------------------------------------------
 # 2. データ読み込み (CSVから)
 # -------------------------------------------
-@st.cache_data
+@st.cache_data(ttl=300)
 def load_data_from_csv():
     file_path = "data/engagement.csv"
     if not os.path.exists(file_path):
