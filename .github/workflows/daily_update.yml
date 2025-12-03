@@ -1,0 +1,41 @@
+name: Update Engagement Data
+
+on:
+  schedule:
+    - cron: '0 15 * * *'  # 毎日深夜0時に実行
+  workflow_dispatch:      # 手動実行ボタンも付ける
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    # リポジトリへの書き込み権限を与える
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install pandas requests slack_sdk
+
+      - name: Run update script
+        env:
+          # GitHubのSecretsからキーを読み込む
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          LINEAR_KEY: ${{ secrets.LINEAR_KEY }}
+        run: python scripts/update_data.py
+
+      - name: Commit and Push if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/engagement.csv
+          # 変更がある時だけコミットする設定
+          git commit -m "📈 Auto-update engagement data" || exit 0
+          git push
